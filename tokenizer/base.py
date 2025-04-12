@@ -25,11 +25,46 @@ def merge(ids, pair, idx ):
 
     return new_ids 
 
-# we have to implement Tokenizer base class so other Classes can inherrite this class to implement their function
+
 class Tokenizer:
+    """Base class for all tokenizer's to inherit"""
 
-    def __init__(self, merges):
-        self.merges = merges
+    def __init__(self) -> None:
+      # rule for merging two tokens as single token (int, int) -> int
+      self.merges = {}
+      # regex pattern to splitting our text to desirable chunks      
+      self.pattern = ''
+      self.special_tokens = {}  # eg: {'<|endoftext|>' : 10000234}
+      # default vocab size is 256 , no merges 
+      self.vocab = self._build_vocab()   
+    
 
-    def train(self):
-        pass
+    def train(self, text, vocab_size, verbose = False):
+      # Tokenizer used to create our vocabulary from size of 256 to vocab_size
+      raise NotImplementedError
+    
+    def encoder(self, text):
+      # Tokenizer can takes bunch of text then gives tokens (integer representation) for that based on some rule
+      raise NotImplementedError
+
+    def decoder(self, ids):
+      # Tokenizer can takes tokens (list of integers) then gives text 
+      raise NotImplementedError
+
+    def _build_vocab(self):
+      # as default vocabulary start with some 0-256 and based on merges we build our desired vocab with vocab size
+      vocab = {idx: bytes([idx]) for idx in range(256)}
+      for (p0, p1), idx in self.merges.items():
+        vocab[idx] = vocab[p0] + vocab[p1]
+      for special, idx in self.special_tokens.items():
+        vocab[idx] = special.encode('utf-8')
+        
+      return vocab
+    
+    def save(self):
+      # Not yet
+      pass
+
+    def load(self):
+      # Not yet
+      pass 
