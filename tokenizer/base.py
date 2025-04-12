@@ -25,7 +25,11 @@ def merge(ids, pair, idx ):
 
     return new_ids 
 
+# we have to implement Tokenizer base class so other Classes can inherrite this class to implement their function
+class Tokenizer:
 
-tummy_ids = [1, 3, 5, 8, 9, 2]
-merges = merge(tummy_ids, [8, 9], 334)
-print(merges)
+    def __init__(self, merges):
+        self.merges = merges
+
+    def train(self):
+        pass
